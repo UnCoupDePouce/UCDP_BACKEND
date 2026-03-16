@@ -9,6 +9,14 @@ const User = {
     return result.rows[0];
   },
 
+  findByEmail: async (email) => {
+    const result = await db.query(
+      "SELECT * FROM utilisateur WHERE mail = $1",
+      [email]
+    );
+    return result.rows[0];
+  },
+
   register: async ({nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale }) => {
     const result = await db.query(
       `INSERT INTO utilisateur (nom,prenom,mdp,mail,telephone,adresse,code_postal,ville,raison_sociale)
