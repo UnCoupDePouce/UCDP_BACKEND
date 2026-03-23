@@ -56,16 +56,6 @@ const Offre = {
         await db.query("DELETE FROM offre WHERE id_offre = $1", [id]);
     },
 
-    requestAccess: async (id_offre, id_presta, message) => {
-        const result = await db.query(
-            `INSERT INTO transaction (id_presta, id_offre, message_presta, date_retour)
-             VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
-             RETURNING *`,
-            [id_presta, id_offre, message]
-        );
-        return result.rows[0];
-    },
-
     closeOffre: async (id_offre) => {
         await db.query("UPDATE offre SET statut = true WHERE id_offre = $1", [id_offre]);
     }

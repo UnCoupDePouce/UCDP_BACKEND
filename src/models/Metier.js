@@ -1,5 +1,4 @@
 import db from "../config/db.js";
-import Message from "./Message.js";
 
 const Metier = {
     getAll: async () => {

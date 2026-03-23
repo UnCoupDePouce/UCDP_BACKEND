@@ -73,19 +73,6 @@ export const updateOffre = async (req, res) => {
     }
 };
 
-export const postulerOffre = async (req, res) => {
-    try {
-        const { id_offre, message_presta } = req.body;
-        const id_presta = req.user.id;
-
-        const candidature = await Offre.requestAccess(id_offre, id_presta, message_presta);
-        res.status(201).json({ message: "Candidature envoyée", candidature });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Erreur lors de la postulation" });
-    }
-};
-
 export const fermerOffre = async (req, res) => {
     try {
         const { id } = req.params;
@@ -99,5 +86,21 @@ export const fermerOffre = async (req, res) => {
         res.json({ message: "Offre clôturée" });
     } catch (error) {
         res.status(500).json({ message: "Erreur fermeture" });
+    }
+};
+
+export const deleteOffre = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const offre = await Offre.findById(id);
+
+        if (offre.id_utilisateur !== req.user.id) {
+            return res.status(403).json({message: "Seul le client peut fermer son offre"});
+        }
+
+        await Offre.delete(id);
+        res.json({message: "Offre supprimé"});
+    } catch (error) {
+        res.status(500).json({message: "Erreur fermeture"});
     }
 };
