@@ -1,0 +1,47 @@
+const logs = [];
+
+const logError = (error, req = null) => {
+    const entry = {
+        id: Date.now() + Math.random().toString(36).substring(2, 8),
+        message: error.message,
+        stack: error.stack,
+        route: req?.originalUrl || null,
+        method: req?.method || null,
+        date: new Date(),
+    };
+
+    logs.push(entry);
+
+    if (logs.length > 200) logs.shift();
+};
+
+const getLogs = (filters = {}) => {
+    return logs.filter(log => {
+        if (filters.route && !log.route?.includes(filters.route)) {
+            return false;
+        }
+
+        if (filters.method && log.method !== filters.method.toUpperCase()) {
+            return false;
+        }
+
+        if (filters.search && !log.message.toLowerCase().includes(filters.search.toLowerCase())) {
+            return false;
+        }
+
+        if (filters.from && new Date(log.date) < new Date(filters.from)) {
+            return false;
+        }
+
+        if (filters.to && new Date(log.date) > new Date(filters.to)) {
+            return false;
+        }
+        
+        return true;
+    });
+};
+
+export default {
+    logError,
+    getLogs
+};
