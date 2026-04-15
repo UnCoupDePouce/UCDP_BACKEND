@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
-import Message from "./src/models/Message.js";
+import Message from "./models/Message.js";
 
 export function initSocket(httpServer) {
   const io = new Server(httpServer, {
