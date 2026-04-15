@@ -14,12 +14,12 @@ const User = {
         }
     },
 
-    register: async ({nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale}) => {
+    register: async ({nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale, role}) => {
         const result = await db.query(
-            `INSERT INTO utilisateur (nom, prenom, mdp, mail, telephone, adresse, code_postal, ville, raison_sociale)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-             RETURNING id_utilisateur AS id, mail AS email`,
-            [nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale]
+            `INSERT INTO utilisateur (nom, prenom, mdp, mail, telephone, adresse, code_postal, ville, raison_sociale, role)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+             RETURNING id_utilisateur AS id, mail AS email, role AS role`,
+            [nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale, role]
         );
         return result.rows[0];
     },

@@ -27,6 +27,7 @@ export const register = async (req, res) => {
     adresse,
     code_postal,
     ville,
+    role,
     raison_sociale,
   } = req.body;
 
@@ -51,6 +52,7 @@ export const register = async (req, res) => {
       adresse,
       code_postal,
       ville,
+      role,
       raison_sociale,
     });
 
@@ -61,22 +63,22 @@ export const register = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.mail },
+      { id: newUser.id, email: newUser.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-
 
     return res.status(201).json({
       message: "Utilisateur créé avec succès",
       token,
       user: {
-        id: newUser.id_utilisateur,
-        email: newUser.mail
-      },
+      id: newUser.id,
+      email: newUser.email,
+      role: newUser.role, 
+    },
     });
   } catch (error) {
-    console.error("REGISTER ERROR:", error);
+    console.error("REGISTER ERROR :", error);
 
     if (error.code === "23505") {
       return res.status(409).json({ message: "Information déjà utilisée" });
@@ -111,6 +113,7 @@ export const login = async (req, res) => {
   });
 };
 
+//Todo : Rajouter, le role pour le modifier en cas de passage de CLIENT a PRESTATAIRE
 export const updateUser = async (req, res) => {
   const {
     nom,
