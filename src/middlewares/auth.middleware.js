@@ -30,7 +30,7 @@ export const authMiddleware = async (req, res, next) => {
 };
 
 export const isAdmin = (req, res, next) => {
-    if (!req.user || req.user.role !== "admin") {
+    if (!req.user || req.user.role !== "ADMIN") {
         return res.status(403).json({ message: "Accès refusé" });
     }
     next();
