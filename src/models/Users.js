@@ -65,14 +65,20 @@ const User = {
         return result.rows[0];
     },
 
-    findAll: async () => {
-        const result = await db.query(
-            `SELECT id_utilisateur, nom, prenom, mail, telephone, adresse, code_postal,
-                    ville, raison_sociale, credits, role, date_creation, id_entreprise
-             FROM utilisateur
-             ORDER BY role, nom`
-        );
-        return result.rows;
+    findAll: async (page = 1, limit = 10) => {
+        const offset = (page - 1) * limit;
+        const [dataResult, countResult] = await Promise.all([
+            db.query(
+                `SELECT id_utilisateur, nom, prenom, mail, telephone, adresse, code_postal,
+                        ville, raison_sociale, credits, role, date_creation, id_entreprise
+                 FROM utilisateur
+                 ORDER BY role, nom
+                 LIMIT $1 OFFSET $2`,
+                [limit, offset]
+            ),
+            db.query(`SELECT COUNT(*)::int AS total FROM utilisateur`),
+        ]);
+        return { data: dataResult.rows, total: countResult.rows[0].total };
     },
 
     findByEmail: async (email) => {

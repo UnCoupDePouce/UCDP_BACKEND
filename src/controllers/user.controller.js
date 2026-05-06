@@ -5,9 +5,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const findAll = async (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 10));
   try {
-    const users = await User.findAll();
-    res.json(users);
+    const result = await User.findAll(page, limit);
+    res.json({ data: result.data, total: result.total, page, limit });
   } catch (error) {
     res.status(500).json({ message: "Erreur du serveur" });
   }
