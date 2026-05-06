@@ -10,7 +10,7 @@ const User = {
             return result.rows[0];
         } catch (err) {
             console.error("Erreur d'exécution de la requête SQL dans Node:", err);
-            throw err; 
+            throw err;
         }
     },
 
@@ -46,13 +46,42 @@ const User = {
         return result.rows[0];
     },
 
+    updateAdmin: async (id, { nom, prenom, mail, role, telephone, adresse, code_postal, ville, raison_sociale, credits, id_entreprise }) => {
+        const result = await db.query(
+            `UPDATE utilisateur
+             SET nom = $1, prenom = $2, mail = $3, role = $4::public."role",
+                 telephone = $5, adresse = $6, code_postal = $7, ville = $8,
+                 raison_sociale = $9, credits = $10, id_entreprise = $11
+             WHERE id_utilisateur = $12
+             RETURNING id_utilisateur, nom, prenom, mail, telephone, adresse, code_postal,
+                       ville, raison_sociale, credits, role, date_creation, id_entreprise`,
+            [
+                nom, prenom, mail, role,
+                telephone || null, adresse || null, code_postal || null, ville || null,
+                raison_sociale || null, credits ?? null, id_entreprise || null,
+                id
+            ]
+        );
+        return result.rows[0];
+    },
+
+    findAll: async () => {
+        const result = await db.query(
+            `SELECT id_utilisateur, nom, prenom, mail, telephone, adresse, code_postal,
+                    ville, raison_sociale, credits, role, date_creation, id_entreprise
+             FROM utilisateur
+             ORDER BY role, nom`
+        );
+        return result.rows;
+    },
+
     findByEmail: async (email) => {
         try {
             const result = await db.query(
                 "SELECT * FROM utilisateur WHERE mail = $1",
                 [email]
             );
-            return result.rows[0]; // Renvoie l'utilisateur ou undefined
+            return result.rows[0];
         } catch (err) {
             console.error("Erreur findByEmail:", err);
             throw err;
