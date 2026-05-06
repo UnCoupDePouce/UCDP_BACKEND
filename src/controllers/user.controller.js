@@ -110,6 +110,28 @@ export const login = async (req, res) => {
     return res.status(401).json({ message: "Identifiants invalides" });
   }
 
+  const token = jwt.sign(
+    { id: user.id_utilisateur, email: user.mail, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" },
+  );
+
+  res.json({ token, user });
+};
+
+export const loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findByEmail(email);
+  if (!user) {
+    return res.status(401).json({ message: "Identifiants invalides" });
+  }
+
+  const isValid = await bcrypt.compare(password, user.mdp);
+  if (!isValid) {
+    return res.status(401).json({ message: "Identifiants invalides" });
+  }
+
   if (user.role !== "ADMIN") {
     return res.status(403).json({ message: "Accès refusé" });
   }

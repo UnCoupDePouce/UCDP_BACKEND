@@ -1,5 +1,5 @@
 import express from "express";
-import { findAll, findById, login, register, updateUserAdmin } from "../controllers/user.controller.js";
+import { findAll, findById, login, loginAdmin, register, updateUserAdmin } from "../controllers/user.controller.js";
 import { registerValidator, loginValidator } from "../validators/user.validator.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
@@ -10,6 +10,7 @@ router.get("/", authMiddleware, findAll);
 router.get("/:id", findById);
 router.post("/register", registerValidator, validate, register);
 router.post("/login", loginValidator, validate, login);
+router.post("/login-admin", loginValidator, validate, loginAdmin);
 router.put("/update", registerValidator, validate, register);
 router.patch("/:id", authMiddleware, updateUserAdmin);
 
