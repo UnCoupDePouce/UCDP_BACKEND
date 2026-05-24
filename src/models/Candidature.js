@@ -87,8 +87,7 @@ export const candidatureModel = {
                            'id_utilisateur', u_presta.id_utilisateur,
                            'prenom', u_presta.prenom,
                            'nom', u_presta.nom,
-                           'mail', u_presta.mail,
-                           'metier',u_presta.metier
+                           'mail', u_presta.mail
                    ) AS prestataire,
 
                    json_build_object(
