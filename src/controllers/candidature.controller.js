@@ -63,11 +63,9 @@ export const validerCandidature = async (req, res) => {
 
         const id_prestataire = candidature.id_prestataire;
 
-        // Message automatique du client vers le prestataire
         const messageAuto = "Félicitations ! Votre candidature a été acceptée. Nous vous contacterons prochainement pour les prochaines étapes.";
         const savedMessage = await Message.save(messageAuto, id_client, id_prestataire);
 
-        // Notification temps réel au prestataire
         const io = getIO();
         if (io) {
             io.to(`user_${id_prestataire}`).emit("new_message", savedMessage);
@@ -113,15 +111,28 @@ export const refuserCandidature = async (req, res) => {
     }
 };
 
-export const getMesCandidatures = async (req, res) => {
-    // On utilise la même clé que pour la postulation (id ou id_utilisateur)
-    const id_prestataire = req.user?.id || req.user?.id_utilisateur;
+export const getCandidatures = async (req, res) => {
+    const id_utilisateur = req.user?.id || req.user?.id_utilisateur;
+    const role = req.query?.role;
 
     try {
-        const candidatures = await candidatureModel.getByPrestataire(id_prestataire);
+        let candidatures = [];
+
+        if (role === 'ADMIN') {
+            candidatures = await candidatureModel.get({});
+        }
+        else if (role === 'CLIENT') {
+            candidatures = await candidatureModel.get({ id_client: id_utilisateur });
+        } else if (role === 'PRESTATAIRE') {
+            candidatures = await candidatureModel.get({ id_prestataire: id_utilisateur });
+        } else {
+            return res.status(403).json({ message: "Rôle non autorisé." });
+        }
+
         res.status(200).json(candidatures);
+
     } catch (error) {
-        console.error("Erreur récup candidatures:", error);
-        res.status(500).json({ message: "Erreur lors de la récupération de vos candidatures." });
+        console.error("Erreur récupération candidatures uniques:", error);
+        res.status(500).json({ message: "Erreur lors de la récupération des candidatures." });
     }
 };

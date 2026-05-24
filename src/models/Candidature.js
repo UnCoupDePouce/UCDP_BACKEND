@@ -65,6 +65,67 @@ export const candidatureModel = {
         return result.rows;
     },
 
+    get: async (filters = {}) => {
+        const { id_client, id_prestataire } = filters;
+
+        let query = `
+            SELECT c.id_candidature,
+                   c.statut,
+                   c.date_postulation,
+
+                   json_build_object(
+                           'id_offre', o.id_offre,
+                           'titre', o.titre,
+                           'description', o.description,
+                           'prix', o.prix,
+                           'localisation', o.localisation,
+                           'date', o.date_offre,
+                           'statut', o.statut
+                   ) AS mission,
+
+                   json_build_object(
+                           'id_utilisateur', u_presta.id_utilisateur,
+                           'prenom', u_presta.prenom,
+                           'nom', u_presta.nom,
+                           'mail', u_presta.mail,
+                           'metier',u_presta.metier
+                   ) AS prestataire,
+
+                   json_build_object(
+                           'id_utilisateur', u_client.id_utilisateur,
+                           'prenom', u_client.prenom,
+                           'nom', u_client.nom,
+                           'mail', u_client.mail
+                   ) AS client
+            FROM candidature c
+                     JOIN offre o ON c.id_offre = o.id_offre
+                     JOIN utilisateur u_presta ON c.id_prestataire = u_presta.id_utilisateur
+                     JOIN utilisateur u_client ON c.id_client = u_client.id_utilisateur
+        `;
+
+        const values = [];
+        const whereClauses = [];
+
+        if (id_client) {
+            values.push(id_client);
+            whereClauses.push(`c.id_client = $${values.length}`);
+        }
+
+        if (id_prestataire) {
+            values.push(id_prestataire);
+            whereClauses.push(`c.id_prestataire = $${values.length}`);
+        }
+
+        if (whereClauses.length > 0) {
+            query += ` WHERE ${whereClauses.join(' AND ')}`;
+        }
+
+        query += ` ORDER BY c.date_postulation DESC;`;
+
+        const result = await db.query(query, values);
+        return result.rows;
+    },
+
     valider: async (id_candidature) => {
         const query = `
             UPDATE candidature

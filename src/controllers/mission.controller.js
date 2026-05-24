@@ -3,7 +3,17 @@ import Offre from "../models/Mission.js";
 export const getAllOffres = async (req, res) => {
     try {
         const { ville } = req.query;
-        const offres = await Offre.findAll(ville || null);
+
+        const options = {};
+
+        if (ville) {
+            options.where = {
+                ville: ville
+            };
+        }
+
+        const offres = await Offre.findAll(options);
+
         res.json(offres);
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de la récupération des offres" });
