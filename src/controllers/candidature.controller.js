@@ -1,4 +1,4 @@
-import { candidatureModel } from "../models/candidature.js";
+import { candidatureModel } from "../models/Candidature.js";
 import Message from "../models/Message.js";
 import { getIO } from "../socket.js";
 import logger from "../utils/logger.js";
