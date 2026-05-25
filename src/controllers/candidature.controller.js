@@ -1,6 +1,7 @@
 import { candidatureModel } from "../models/candidature.js";
 import Message from "../models/Message.js";
 import { getIO } from "../socket.js";
+import logger from "../utils/logger.js";
 
 export const postulerOffre = async (req, res) => {
     const { id_offre, id_client } = req.body;
@@ -9,6 +10,7 @@ export const postulerOffre = async (req, res) => {
     try {
         const alreadyApplied = await candidatureModel.checkExisting(id_prestataire, id_offre);
         if (alreadyApplied) {
+            logger.logClientError(`Candidature déjà existante pour offre ${id_offre}`, req, 400);
             return res.status(400).json({ message: "Vous avez déjà postulé à cette mission." });
         }
 
@@ -28,6 +30,7 @@ export const postulerOffre = async (req, res) => {
             io.to(`user_${id_client}`).emit("new_message", savedMessage);
         }
 
+        logger.logSuccess(`Candidature envoyée pour offre ${id_offre}`, req, 201);
         res.status(201).json({
             message: "Candidature envoyée avec succès !",
             data: nouvelleCandidature
@@ -35,6 +38,7 @@ export const postulerOffre = async (req, res) => {
 
     } catch (error) {
         console.error("Erreur postulation:", error);
+        logger.logError(error, req);
         res.status(500).json({ message: "Une erreur est survenue lors de la postulation." });
     }
 };
@@ -44,9 +48,11 @@ export const getCandidaturesClient = async (req, res) => {
 
     try {
         const candidatures = await candidatureModel.getByClient(id_client);
+        logger.logSuccess(`Candidatures client récupérées`, req, 200);
         res.status(200).json(candidatures);
     } catch (error) {
         console.error("Erreur récup candidatures client:", error);
+        logger.logError(error, req);
         res.status(500).json({ message: "Erreur lors de la récupération des candidatures." });
     }
 };
@@ -58,6 +64,7 @@ export const validerCandidature = async (req, res) => {
     try {
         const candidature = await candidatureModel.valider(id);
         if (!candidature) {
+            logger.logClientError(`Candidature introuvable ou déjà traitée: ${id}`, req, 404);
             return res.status(404).json({ message: "Candidature introuvable ou déjà traitée." });
         }
 
@@ -71,6 +78,7 @@ export const validerCandidature = async (req, res) => {
             io.to(`user_${id_prestataire}`).emit("new_message", savedMessage);
         }
 
+        logger.logSuccess(`Candidature validée: ${id}`, req, 200);
         res.status(200).json({
             message: "Candidature validée avec succès.",
             data: candidature
@@ -78,6 +86,7 @@ export const validerCandidature = async (req, res) => {
 
     } catch (error) {
         console.error("Erreur validation candidature:", error);
+        logger.logError(error, req);
         res.status(500).json({ message: "Erreur lors de la validation de la candidature." });
     }
 };
@@ -89,6 +98,7 @@ export const refuserCandidature = async (req, res) => {
     try {
         const candidature = await candidatureModel.refuser(id);
         if (!candidature) {
+            logger.logClientError(`Candidature introuvable ou déjà traitée: ${id}`, req, 404);
             return res.status(404).json({ message: "Candidature introuvable ou déjà traitée." });
         }
 
@@ -103,10 +113,12 @@ export const refuserCandidature = async (req, res) => {
             io.to(`user_${id_prestataire}`).emit("new_message", savedMessage);
         }
 
+        logger.logSuccess(`Candidature refusée: ${id}`, req, 200);
         res.status(200).json({ message: "Candidature refusée.", data: candidature });
 
     } catch (error) {
         console.error("Erreur refus candidature:", error);
+        logger.logError(error, req);
         res.status(500).json({ message: "Erreur lors du refus de la candidature." });
     }
 };
@@ -126,13 +138,16 @@ export const getCandidatures = async (req, res) => {
         } else if (role === 'PRESTATAIRE') {
             candidatures = await candidatureModel.get({ id_prestataire: id_utilisateur });
         } else {
+            logger.logClientError(`Rôle non autorisé: ${role}`, req, 403);
             return res.status(403).json({ message: "Rôle non autorisé." });
         }
 
+        logger.logSuccess(`Candidatures récupérées (rôle: ${role})`, req, 200);
         res.status(200).json(candidatures);
 
     } catch (error) {
         console.error("Erreur récupération candidatures uniques:", error);
+        logger.logError(error, req);
         res.status(500).json({ message: "Erreur lors de la récupération des candidatures." });
     }
 };

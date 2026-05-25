@@ -7,10 +7,63 @@ const logError = (error, req = null) => {
         stack: error.stack,
         route: req?.originalUrl || null,
         method: req?.method || null,
+        level: "ERROR",
         date: new Date(),
     };
 
     logs.push(entry);
+    console.error(`[ERROR] ${entry.method} ${entry.route} - ${entry.message}`);
+
+    if (logs.length > 200) logs.shift();
+};
+
+const logInfo = (message, req = null, data = null) => {
+    const entry = {
+        id: Date.now() + Math.random().toString(36).substring(2, 8),
+        message,
+        route: req?.originalUrl || null,
+        method: req?.method || null,
+        level: "INFO",
+        data,
+        date: new Date(),
+    };
+
+    logs.push(entry);
+    console.log(`[INFO] ${entry.method} ${entry.route} - ${message}`);
+
+    if (logs.length > 200) logs.shift();
+};
+
+const logSuccess = (message, req = null, statusCode = 200) => {
+    const entry = {
+        id: Date.now() + Math.random().toString(36).substring(2, 8),
+        message,
+        route: req?.originalUrl || null,
+        method: req?.method || null,
+        level: "SUCCESS",
+        statusCode,
+        date: new Date(),
+    };
+
+    logs.push(entry);
+    console.log(`[SUCCESS] ${entry.method} ${entry.route} - ${message} (${statusCode})`);
+
+    if (logs.length > 200) logs.shift();
+};
+
+const logClientError = (message, req = null, statusCode = 400) => {
+    const entry = {
+        id: Date.now() + Math.random().toString(36).substring(2, 8),
+        message,
+        route: req?.originalUrl || null,
+        method: req?.method || null,
+        level: "CLIENT_ERROR",
+        statusCode,
+        date: new Date(),
+    };
+
+    logs.push(entry);
+    console.warn(`[CLIENT_ERROR] ${entry.method} ${entry.route} - ${message} (${statusCode})`);
 
     if (logs.length > 200) logs.shift();
 };
@@ -19,6 +72,7 @@ const getLogs = (filters = {}) => {
     let result = logs.filter(log => {
         if (filters.route && !log.route?.includes(filters.route)) return false;
         if (filters.method && log.method !== filters.method.toUpperCase()) return false;
+        if (filters.level && log.level !== filters.level) return false;
 
         if (
             filters.search &&
@@ -50,7 +104,18 @@ const getLogs = (filters = {}) => {
     };
 };
 
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch((error) => {
+        logError(error, req);
+        next(error);
+    });
+};
+
 export default {
     logError,
-    getLogs
+    logInfo,
+    logSuccess,
+    logClientError,
+    getLogs,
+    asyncHandler
 };

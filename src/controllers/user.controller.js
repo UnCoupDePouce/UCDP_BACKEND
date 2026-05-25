@@ -2,6 +2,7 @@ import User from "../models/Users.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import dotenv from 'dotenv';
+import logger from "../utils/logger.js";
 
 dotenv.config();
 
@@ -10,10 +11,13 @@ export const findById = async (req, res) => {
     try {
         const user = await User.findById(id);
         if (!user) {
+            logger.logClientError("Utilisateur inexistant", req, 404);
             return res.status(404).json({message: "Utilisateur inexistant"});
         }
+        logger.logSuccess("Utilisateur récupéré", req, 200);
         res.json(user);
     } catch (error) {
+        logger.logError(error, req);
         res.status(500).json({message: "Erreur du serveur"});
     }
 };
@@ -34,11 +38,13 @@ export const register = async (req, res) => {
 
     try {
         if (!email || !password) {
+            logger.logClientError("Email et mot de passe requis", req, 400);
             return res.status(400).json({message: "Email et mot de passe requis"});
         }
 
         const existingUser = await User.findByEmail(email);
         if (existingUser) {
+            logger.logClientError(`Email déjà utilisé: ${email}`, req, 409);
             return res.status(409).json({message: "Information déjà utilisée"});
         }
 
@@ -59,6 +65,7 @@ export const register = async (req, res) => {
         });
 
         if (!process.env.JWT_SECRET) {
+            logger.logError(new Error("JWT_SECRET non configuré"), req);
             return res.status(500).json({
                 message: "Configuration serveur invalide",
             });
@@ -70,6 +77,7 @@ export const register = async (req, res) => {
             {expiresIn: "1h"}
         );
 
+        logger.logSuccess(`Utilisateur créé: ${email}`, req, 201);
         return res.status(201).json({
             message: "Utilisateur créé avec succès",
             token,
@@ -85,9 +93,11 @@ export const register = async (req, res) => {
         console.error("REGISTER ERROR :", error);
 
         if (error.code === "23505") {
+            logger.logClientError("Email déjà utilisé (DB constraint)", req, 409);
             return res.status(409).json({message: "Information déjà utilisée"});
         }
 
+        logger.logError(error, req);
         return res.status(500).json({message: "Erreur interne du serveur"});
     }
 };
@@ -97,11 +107,13 @@ export const login = async (req, res) => {
 
     const user = await User.findByEmail(email);
     if (!user) {
+        logger.logClientError(`Tentative de connexion avec email inexistant: ${email}`, req, 401);
         return res.status(401).json({message: "Identifiants invalides"});
     }
 
     const isValid = await bcrypt.compare(password, user.mdp);
     if (!isValid) {
+        logger.logClientError(`Mot de passe invalide pour: ${email}`, req, 401);
         return res.status(401).json({message: "Identifiants invalides"});
     }
 
@@ -111,6 +123,7 @@ export const login = async (req, res) => {
         {expiresIn: "1 Weeks"}
     );
 
+    logger.logSuccess(`Connexion réussie: ${email}`, req, 200);
     res.json({
         token,
         user
@@ -143,12 +156,14 @@ export const updateUser = async (req, res) => {
             ville,
             raison_sociale,
         });
+        logger.logSuccess(`Utilisateur mis à jour: ${email}`, req, 200);
         res.json({
             message: "Utilisateur mis à jour avec succès",
             user: updatedUser,
         });
     } catch (error) {
         console.error("UPDATE ERROR:", error);
+        logger.logError(error, req);
         res.status(500).json({message: "Erreur du serveur"});
     }
 };

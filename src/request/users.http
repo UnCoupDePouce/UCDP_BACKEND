@@ -1,0 +1,18 @@
+@baseUrl = http://localhost:3000/api/user
+
+### Register 
+POST {{baseUrl}}/register
+content-type: application/json
+
+{
+    "nom": "Boyer",
+    "prenom": "Evan",
+    "email": "evanboy@hotmail.com",
+    "password": "Azertyuiop12345.",
+    "telephone": "0987654321",
+    "adresse": "Blabla ",
+    "code_postal": "31100",
+    "ville": "Toulouse",
+    "raison_sciale": null,
+    "role":"CLIENT"
+}

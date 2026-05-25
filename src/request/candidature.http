@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:3000/api/candidature
+
+### Test API Ping
+/api/candidatures
+POST {{baseUrl}}/apply
+content: application/json
+
+
+
+router.post("/apply", authMiddleware, postulerOffre);
+router.get("/me", authMiddleware, getCandidatures);
+router.get("/client", authMiddleware, getCandidaturesClient);
+router.patch("/:id/valider", authMiddleware, validerCandidature);
+router.patch("/:id/refuser", authMiddleware, refuserCandidature);

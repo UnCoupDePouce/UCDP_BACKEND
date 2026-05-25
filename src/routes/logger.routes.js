@@ -4,6 +4,6 @@ import { getLogs } from "../controllers/logger.controller.js";
 
 const router = express.Router();
 
-router.get("/", /*authMiddleware*/ getLogs);
+router.get("/", /*authMiddleware,*/ getLogs);
 
 export default router;

@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:3000/api
+
+### Test API Ping
+GET {{baseUrl}}/ping
+
+### Test API Ping
+GET {{baseUrl}}/logs
