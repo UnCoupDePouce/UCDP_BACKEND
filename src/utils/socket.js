@@ -2,6 +2,12 @@ import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import Message from "../models/Message.js";
 
+let ioInstance = null;
+
+export function getIO() {
+  return ioInstance;
+}
+
 export function initSocket(httpServer) {
   const io = new Server(httpServer, {
     cors: {
@@ -59,7 +65,14 @@ export function initSocket(httpServer) {
         socket.emit("error", { message: "Erreur lors de l'envoi du message" });
       }
     });
+
+    // Indicateur "en train d'écrire"
+    socket.on("typing", ({ contactId, isTyping }) => {
+      const room = [userId, contactId].sort().join("_");
+      socket.to(room).emit("typing", { userId, isTyping });
+    });
   });
 
+  ioInstance = io;
   return io;
 }

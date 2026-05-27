@@ -18,3 +18,15 @@ export const getConversations = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+export const getConversation = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { contactId } = req.params;
+    const messages = await Message.getConversation(userId, contactId);
+    res.json(messages);
+  } catch (err) {
+    console.error("Erreur getConversation:", err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
