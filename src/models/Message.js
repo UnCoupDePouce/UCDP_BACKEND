@@ -3,7 +3,9 @@ import db from "../config/db.js";
 const Message = {
   save: async (corps, id_expediteur, id_destinataire) => {
     const result = await db.query(
-      "INSERT INTO messages (corps, id_expediteur, id_destinataire) VALUES ($1, $2, $3) RETURNING *",
+      `INSERT INTO messages (corps, id_expediteur, id_destinataire)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
       [corps, id_expediteur, id_destinataire]
     );
     return result.rows[0];
@@ -11,7 +13,8 @@ const Message = {
 
   getConversation: async (user1, user2) => {
     const result = await db.query(
-      `SELECT * FROM messages
+      `SELECT *
+       FROM messages
        WHERE (id_expediteur = $1 AND id_destinataire = $2)
           OR (id_expediteur = $2 AND id_destinataire = $1)
        ORDER BY ctid ASC`,
