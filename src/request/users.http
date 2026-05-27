@@ -1,13 +1,13 @@
-@baseUrl = http://localhost:3000/api/user
+@baseUrl = https://ucdp-backend.onrender.com/api/user
 
 ### Register 
-POST {{baseUrl}}/register
+POST http://localhost:3000/api/user/register
 content-type: application/json
 
 {
     "nom": "Boyer",
     "prenom": "Evan",
-    "email": "evanboy@hotmail.com",
+    "email": "evanboy@hotmail.frrr",
     "password": "Azertyuiop12345.",
     "telephone": "0987654321",
     "adresse": "Blabla ",
@@ -16,3 +16,6 @@ content-type: application/json
     "raison_sciale": null,
     "role":"CLIENT"
 }
+
+### Login
+GET http://localhost:3000/api/logs
