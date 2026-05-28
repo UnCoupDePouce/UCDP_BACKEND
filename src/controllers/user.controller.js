@@ -195,3 +195,15 @@ export const updateUser = async (req, res) => {
         res.status(500).json({message: "Erreur du serveur"});
     }
 };
+
+export const findAll = async (req, res) => {
+    try {
+        const users = await User.findAll();
+        logger.logSuccess(`Tous les utilisateurs récupérés`, req, 200);
+        res.json(users);
+    } 
+    catch (error) {
+            logger.logError(error, req, {operation: "findAll"});
+            res.status(500).json({message: "Erreur du serveur"});
+    }
+};

@@ -101,7 +101,35 @@ const Offre = {
             logger.logDatabase(err, `UPDATE offre SET statut = true WHERE id_offre = ${id_offre}`);
             throw err;
         }
-    }
-};
+    },
 
-export default Offre;
+    search: async (research) => {
+    try {
+        const result = await db.query(
+            `SELECT 
+                o.*,
+                to_jsonb(u) AS utilisateur,
+                to_jsonb(m) AS metier
+            FROM offre o
+            LEFT JOIN utilisateur u 
+                ON o.id_utilisateur = u.id_utilisateur
+            LEFT JOIN metier m 
+                ON o.id_metier = m.id_metier
+            WHERE 
+                o.localisation ILIKE $1
+                OR o.titre ILIKE $1
+                OR m.nom ILIKE $1
+                OR u.nom ILIKE $1
+                OR u.prenom ILIKE $1
+            ORDER BY o.date_offre DESC`,
+            [`%${research}%`]
+        );
+
+        return result.rows;
+    } catch (err) {
+        logger.logDatabase(err, `SEARCH offre with research ${research}`);
+        throw err;
+    }
+}
+};
+        export default Offre;

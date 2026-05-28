@@ -7,7 +7,7 @@ content-type: application/json
 {
     "nom": "Boyer",
     "prenom": "Evan",
-    "email": "evanboy@hotmail.frrr",
+    "email": "evanboy@hotmail.test",
     "password": "Azertyuiop12345.",
     "telephone": "0987654321",
     "adresse": "Blabla ",
@@ -19,3 +19,12 @@ content-type: application/json
 
 ### Login
 GET http://localhost:3000/api/logs
+
+###Login
+POST http://localhost:3000/api/user/login
+content-type: application/json
+
+{
+    "email": "evanboy@hotmail.com",
+    "password": "Azertyuiop12345."
+}

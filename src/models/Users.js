@@ -15,13 +15,24 @@ const User = {
         }
     },
 
+    findAll: async () => {
+        try {
+            const result = await db.query("SELECT * FROM utilisateur ORDER BY date_creation DESC");
+            return result.rows;
+        } catch (err) {
+            logger.logDatabase(err, "SELECT * FROM utilisateur");
+            throw err; 
+        }
+    },
+
+    
     register: async ({nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale, role}) => {
         try {
             const result = await db.query(
-                `INSERT INTO utilisateur (nom, prenom, mdp, mail, telephone, adresse, code_postal, ville, raison_sociale, role)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                `INSERT INTO utilisateur (nom, prenom, mdp, mail, telephone, adresse, code_postal, ville, raison_sociale, date_creation, role)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                  RETURNING id_utilisateur AS id, mail AS email, role AS role`,
-                [nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale, role]
+                [nom, prenom, password, email, telephone, adresse, code_postal, ville, raison_sociale, new Date(), role]
             );
             return result.rows[0];
         } catch (err) {

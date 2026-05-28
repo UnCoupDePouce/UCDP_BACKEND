@@ -151,3 +151,14 @@ export const deleteOffre = async (req, res) => {
         res.status(500).json({message: "Erreur suppression"});
     }
 };
+export const searchOffres = async (req, res) => {
+    try {
+        const { research } = req.body;
+        const offres = await Offre.search(research);
+        logger.logSuccess(`Offres recherchées avec le mot-clé: ${research} (${offres?.length || 0} résultats)`, req, 200);
+        res.json(offres);
+    } catch (error) {
+        logger.logError(error, req, {operation: "searchOffres", research: req.body.research});
+        res.status(500).json({ message: "Erreur lors de la recherche des offres" });
+    }
+};

@@ -1,7 +1,15 @@
-@baseUrl = http://localhost:3000/api/user
+@baseUrl = http://localhost:3000/api/offre
 
 ### Test API Ping
 GET {{baseUrl}}/
 
 ### Test API Ping
 GET {{baseUrl}}/
+
+### Test Research
+POST {{baseUrl}}/search
+content-type: application/json
+
+{
+    "research": "Zab"
+}
