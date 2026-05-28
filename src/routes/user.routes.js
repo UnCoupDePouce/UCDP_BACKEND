@@ -11,7 +11,7 @@ router.get("/:id", logger.asyncHandler(findById));
 router.post("/register", registerValidator, validate, logger.asyncHandler(register));
 router.post("/login", loginValidator, validate, logger.asyncHandler(login));
 router.put("/update", registerValidator,authMiddleware,isAdmin, validate, logger.asyncHandler(updateUser));
-router.get("/all",authMiddleware,isAdmin, logger.asyncHandler(findAll));
+router.get("/", logger.asyncHandler(findAll));
 
 
 export default router;

@@ -7,18 +7,20 @@ content-type: application/json
 {
     "nom": "Boyer",
     "prenom": "Evan",
-    "email": "evanboy@hotmail.test",
-    "password": "Azertyuiop12345.",
+    "password": "Azerty12345.",
     "telephone": "0987654321",
     "adresse": "Blabla ",
     "code_postal": "31100",
     "ville": "Toulouse",
     "raison_sciale": null,
-    "role":"CLIENT"
+    "role":"ADMIN"
 }
+###Take All Users
+GET http://localhost:3000/api/user/all
+
 
 ### Login
-GET http://localhost:3000/api/logs
+GET https://ucdp-backend.onrender.com/api/logs
 
 ###Login
 POST http://localhost:3000/api/user/login
@@ -27,4 +29,140 @@ content-type: application/json
 {
     "email": "evanboy@hotmail.com",
     "password": "Azertyuiop12345."
+}
+
+### Jean Dupont
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "password": "Password123.",
+  "email": "jean.dupont@mail.com",
+  "telephone": "0611223344",
+  "adresse": "12 rue des Lilas",
+  "code_postal": "31000",
+  "ville": "Toulouse",
+  "raison_sociale": null,
+  "role": "CLIENT"
+}
+
+### Sophie Martin
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Martin",
+  "prenom": "Sophie",
+  "password": "Password123.",
+  "email": "sophie.martin@mail.com",
+  "telephone": "0622334455",
+  "adresse": "8 avenue Victor Hugo",
+  "code_postal": "75000",
+  "ville": "Paris",
+  "raison_sociale": null,
+  "role": "CLIENT"
+}
+
+### Lucas Bernard
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Bernard",
+  "prenom": "Lucas",
+  "password": "Password123.",
+  "email": "lucas.bernard@mail.com",
+  "telephone": "0633445566",
+  "adresse": "5 chemin des Roses",
+  "code_postal": "69000",
+  "ville": "Lyon",
+  "raison_sociale": "Bernard Electricité",
+  "role": "PRESTATAIRE"
+}
+
+### Emma Petit
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Petit",
+  "prenom": "Emma",
+  "password": "Password123.",
+  "email": "emma.petit@mail.com",
+  "telephone": "0644556677",
+  "adresse": "22 boulevard Carnot",
+  "code_postal": "13000",
+  "ville": "Marseille",
+  "raison_sociale": "Petit Plomberie",
+  "role": "PRESTATAIRE"
+}
+
+### Thomas Durand
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Durand",
+  "prenom": "Thomas",
+  "password": "Password123.",
+  "email": "thomas.durand@mail.com",
+  "telephone": "0655667788",
+  "adresse": "15 rue Nationale",
+  "code_postal": "31000",
+  "ville": "Toulouse",
+  "raison_sociale": "Durand Construction",
+  "role": "PRESTATAIRE"
+}
+
+### Julie Moreau
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Moreau",
+  "prenom": "Julie",
+  "password": "Password123.",
+  "email": "julie.moreau@mail.com",
+  "telephone": "0666778899",
+  "adresse": "3 rue Pasteur",
+  "code_postal": "44000",
+  "ville": "Nantes",
+  "raison_sociale": null,
+  "role": "CLIENT"
+}
+
+### Nicolas Garcia
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Garcia",
+  "prenom": "Nicolas",
+  "password": "Password123.",
+  "email": "nicolas.garcia@mail.com",
+  "telephone": "0677889900",
+  "adresse": "9 rue Voltaire",
+  "code_postal": "59000",
+  "ville": "Lille",
+  "raison_sociale": "Garcia Rénovation",
+  "role": "PRESTATAIRE"
+}
+
+### Camille Roux
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "nom": "Roux",
+  "prenom": "Camille",
+  "password": "Password123.",
+  "email": "camille.roux@mail.com",
+  "telephone": "0688990011",
+  "adresse": "45 avenue Jean Jaurès",
+  "code_postal": "33000",
+  "ville": "Bordeaux",
+  "raison_sociale": null,
+  "role": "CLIENT"
 }
