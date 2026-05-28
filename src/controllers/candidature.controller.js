@@ -1,6 +1,6 @@
 import { candidatureModel } from "../models/Candidature.js";
 import Message from "../models/Message.js";
-import { getIO } from "../socket.js";
+import { getIO } from "../utils/socket.js";
 import logger from "../utils/logger.js";
 
 export const postulerOffre = async (req, res) => {
